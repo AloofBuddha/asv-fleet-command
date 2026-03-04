@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+
+# PartyKit
+.partykit/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Test
+e2e/screenshots/
+playwright-report/
+test-results/
+
+# Build info
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
