@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import * as stylex from "@stylexjs/stylex";
 import { colors, spacing, fontSizes } from "../styles/tokens.stylex";
 import { useFleetStore } from "../stores/fleetStore";
+import { AlertDropdown } from "./AlertPanel";
 
 const SIM_SPEED_OPTIONS = [1, 10, 60, 300] as const;
 
@@ -101,7 +102,6 @@ export function Header({ sidebarCollapsed, onToggleSidebar }: HeaderProps) {
   const time = useUTCClock();
   const simSpeed = useFleetStore((s) => s.simSpeed);
   const lastUpdate = useFleetStore((s) => s.lastUpdate);
-
   const utcStr = time.toISOString().slice(11, 19);
   const dateStr = time.toISOString().slice(0, 10);
   const dataAge = lastUpdate ? Math.floor((time.getTime() - lastUpdate) / 1000) : null;
@@ -147,6 +147,7 @@ export function Header({ sidebarCollapsed, onToggleSidebar }: HeaderProps) {
         >
           {simSpeed}x speed
         </button>
+        <AlertDropdown />
         <span {...stylex.props(styles.clock)}>
           {dateStr} {utcStr}Z
         </span>

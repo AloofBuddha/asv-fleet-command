@@ -6,6 +6,7 @@ import { Header } from "./components/Header";
 import { FleetSidebar } from "./components/Sidebar/FleetSidebar";
 import { VesselDetailPanel } from "./components/Detail/VesselDetailPanel";
 import { Demo } from "./components/Demo";
+import { AlertToast } from "./components/AlertPanel";
 import { useFleetConnection } from "./hooks/useFleetConnection";
 import { useFleetStore } from "./stores/fleetStore";
 
@@ -32,7 +33,9 @@ const isDemo = new URLSearchParams(window.location.search).has("demo");
 
 function FleetApp() {
   useFleetConnection();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem("sidebarCollapsed") === "true",
+  );
   const selectedVesselId = useFleetStore((s) => s.selectedVesselId);
   const [flyToTarget, setFlyToTarget] = useState<{
     lat: number;
@@ -47,7 +50,12 @@ function FleetApp() {
     <div {...stylex.props(styles.root)}>
       <Header
         sidebarCollapsed={sidebarCollapsed}
-        onToggleSidebar={() => setSidebarCollapsed((c) => !c)}
+        onToggleSidebar={() =>
+          setSidebarCollapsed((c) => {
+            localStorage.setItem("sidebarCollapsed", String(!c));
+            return !c;
+          })
+        }
       />
       <div {...stylex.props(styles.body)}>
         <FleetSidebar
@@ -60,6 +68,7 @@ function FleetApp() {
             sidebarCollapsed={sidebarCollapsed}
             detailOpen={!!selectedVesselId}
           />
+          <AlertToast />
         </div>
         <VesselDetailPanel />
       </div>

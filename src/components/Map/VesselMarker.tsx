@@ -4,6 +4,7 @@ import L from "leaflet";
 import type { VesselTelemetry } from "../../types/vessel";
 import { useFleetStore } from "../../stores/fleetStore";
 import { vesselInfoMap } from "../../data/vesselConfigs";
+import { vesselIconSvg } from "../vesselIconSvg";
 
 interface VesselMarkerProps {
   telemetry: VesselTelemetry;
@@ -23,23 +24,15 @@ function getVesselColor(telemetry: VesselTelemetry): string {
 }
 
 function createVesselIcon(
+  vesselType: "lightfish" | "quickfish",
   color: string,
   heading: number,
   isSelected: boolean,
   isOffline: boolean,
 ): L.DivIcon {
-  const size = isSelected ? 20 : 14;
+  const size = isSelected ? 22 : 16;
 
-  const svg = `
-    <svg width="${size}" height="${size}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-         style="transform: rotate(${heading}deg); filter: drop-shadow(0 0 3px ${color}80);">
-      <path d="M12 2 L20 20 L12 15 L4 20 Z"
-            fill="${color}"
-            stroke="${isSelected ? "#fff" : color}"
-            stroke-width="${isSelected ? 2 : 0.5}"
-            opacity="${isOffline ? 0.4 : 0.9}" />
-    </svg>
-  `;
+  const svg = vesselIconSvg(vesselType, color, heading, size, isSelected, isOffline);
 
   return L.divIcon({
     html: svg,
@@ -54,14 +47,16 @@ export function VesselMarker({ telemetry }: VesselMarkerProps) {
   const selectVessel = useFleetStore((s) => s.selectVessel);
   const isSelected = selectedVesselId === telemetry.vesselId;
 
+  const info = vesselInfoMap.get(telemetry.vesselId);
+  const vesselType = info?.type ?? "lightfish";
   const color = getVesselColor(telemetry);
   // Round heading to nearest 5 degrees to avoid icon recreation on tiny changes
   const roundedHeading = Math.round(telemetry.heading / 5) * 5;
   const isOffline = telemetry.status === "offline";
 
   const icon = useMemo(
-    () => createVesselIcon(color, roundedHeading, isSelected, isOffline),
-    [color, roundedHeading, isSelected, isOffline],
+    () => createVesselIcon(vesselType, color, roundedHeading, isSelected, isOffline),
+    [vesselType, color, roundedHeading, isSelected, isOffline],
   );
 
   return (
@@ -74,10 +69,9 @@ export function VesselMarker({ telemetry }: VesselMarkerProps) {
     >
       <Tooltip direction="top" offset={[0, -10]}>
         <strong>
-          {vesselInfoMap.get(telemetry.vesselId)?.name ?? telemetry.vesselId}{" "}
+          {info?.name ?? telemetry.vesselId}{" "}
           <span style={{ opacity: 0.6 }}>
-            {vesselInfoMap.get(telemetry.vesselId)?.callsign ??
-              telemetry.vesselId.toUpperCase()}
+            {info?.callsign ?? telemetry.vesselId.toUpperCase()}
           </span>
         </strong>
         <br />

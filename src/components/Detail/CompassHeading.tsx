@@ -1,39 +1,13 @@
 import * as stylex from "@stylexjs/stylex";
 import { colors, fontSizes } from "../../styles/tokens.stylex";
 
-const styles = stylex.create({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "4px",
-  },
-  label: {
-    fontSize: fontSizes.xs,
-    color: colors.textMuted,
-    textTransform: "uppercase",
-    letterSpacing: "0.05em",
-  },
-  value: {
-    fontSize: fontSizes.sm,
-    fontFamily: "monospace",
-    color: colors.textPrimary,
-  },
-});
+interface CompassHeadingProps {
+  heading: number;
+}
 
 const SIZE = 80;
 const CENTER = SIZE / 2;
 const RADIUS = 32;
-
-function cardinalLabel(deg: number): string {
-  const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  const idx = Math.round(deg / 45) % 8;
-  return dirs[idx]!;
-}
-
-interface CompassHeadingProps {
-  heading: number;
-}
 
 export function CompassHeading({ heading }: CompassHeadingProps) {
   const headingRad = ((heading - 90) * Math.PI) / 180;
@@ -115,3 +89,29 @@ export function CompassHeading({ heading }: CompassHeadingProps) {
     </div>
   );
 }
+
+function cardinalLabel(deg: number): string {
+  const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  const idx = Math.round(deg / 45) % 8;
+  return dirs[idx]!;
+}
+
+const styles = stylex.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "4px",
+  },
+  label: {
+    fontSize: fontSizes.xs,
+    color: colors.textMuted,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+  },
+  value: {
+    fontSize: fontSizes.sm,
+    fontFamily: "monospace",
+    color: colors.textPrimary,
+  },
+});

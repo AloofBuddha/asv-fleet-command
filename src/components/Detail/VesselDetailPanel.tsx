@@ -2,9 +2,25 @@ import * as stylex from "@stylexjs/stylex";
 import { colors, spacing, fontSizes, radii } from "../../styles/tokens.stylex";
 import { useFleetStore } from "../../stores/fleetStore";
 import { vesselInfoMap } from "../../data/vesselConfigs";
+import type { VesselTelemetry } from "../../types/vessel";
+
+const EMPTY_HISTORY: VesselTelemetry[] = [];
+
+/** Read history directly from store to avoid selector reference instability */
+function useHistory(vesselId: string | null): VesselTelemetry[] {
+  // Subscribe to history length changes only (stable primitive)
+  const len = useFleetStore((s) =>
+    vesselId ? (s.telemetryHistory.get(vesselId)?.length ?? 0) : 0,
+  );
+  // Read the actual array imperatively — only when length > 0
+  if (len === 0 || !vesselId) return EMPTY_HISTORY;
+  return useFleetStore.getState().telemetryHistory.get(vesselId) ?? EMPTY_HISTORY;
+}
 import { BatteryGauge } from "./BatteryGauge";
 import { CompassHeading } from "./CompassHeading";
 import { StatusIndicators } from "./StatusIndicators";
+import { TelemetryCharts } from "./TelemetryCharts";
+import { WaypointProgress } from "./WaypointProgress";
 
 const styles = stylex.create({
   panel: {
@@ -97,6 +113,7 @@ export function VesselDetailPanel() {
     s.selectedVesselId ? s.vessels.get(s.selectedVesselId) : undefined,
   );
   const selectVessel = useFleetStore((s) => s.selectVessel);
+  const history = useHistory(selectedVesselId);
 
   if (!selectedVesselId || !telemetry) return null;
 
@@ -133,6 +150,8 @@ export function VesselDetailPanel() {
             {formatCoord(telemetry.position.lat, telemetry.position.lng)}
           </span>
         </div>
+        <WaypointProgress telemetry={telemetry} route={info.route} />
+        <TelemetryCharts history={history} />
       </div>
     </aside>
   );

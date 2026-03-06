@@ -44,6 +44,23 @@ export interface VesselTelemetry {
   segmentProgress: number;
 }
 
+export type AlertType =
+  | "battery_critical"
+  | "battery_warning"
+  | "comms_lost"
+  | "status_critical"
+  | "status_offline";
+
+export interface Alert {
+  id: string;
+  vesselId: string;
+  vesselName: string;
+  type: AlertType;
+  message: string;
+  timestamp: number;
+  acknowledged: boolean;
+}
+
 /** Fleet-level broadcast containing all vessel telemetry */
 export interface FleetUpdate {
   type: "fleet_update";

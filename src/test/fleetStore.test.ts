@@ -25,6 +25,8 @@ describe("fleetStore", () => {
     useFleetStore.setState({
       vessels: new Map(),
       trails: new Map(),
+      telemetryHistory: new Map(),
+      alerts: [],
       selectedVesselId: null,
       simSpeed: 60,
       lastUpdate: 0,
@@ -109,5 +111,51 @@ describe("fleetStore", () => {
     const lastUpdate = useFleetStore.getState().lastUpdate;
     expect(lastUpdate).toBeGreaterThanOrEqual(before);
     expect(lastUpdate).toBeLessThanOrEqual(after);
+  });
+
+  it("telemetryHistory accumulates across updates", () => {
+    const t1 = makeTelemetry("lf-01", { battery: 90 });
+    useFleetStore.getState().updateFleet([t1], {}, 60);
+
+    const t2 = makeTelemetry("lf-01", { battery: 85 });
+    useFleetStore.getState().updateFleet([t2], {}, 60);
+
+    const t3 = makeTelemetry("lf-01", { battery: 80 });
+    useFleetStore.getState().updateFleet([t3], {}, 60);
+
+    const history = useFleetStore.getState().telemetryHistory.get("lf-01");
+    expect(history).toHaveLength(3);
+    expect(history![0]!.battery).toBe(90);
+    expect(history![2]!.battery).toBe(80);
+  });
+
+  it("telemetryHistory caps at 300 entries", () => {
+    // Seed with 299 entries
+    for (let i = 0; i < 299; i++) {
+      useFleetStore.getState().updateFleet(
+        [makeTelemetry("lf-01", { battery: i })],
+        {},
+        60,
+      );
+    }
+    expect(useFleetStore.getState().telemetryHistory.get("lf-01")).toHaveLength(299);
+
+    // Two more pushes it to 301, should cap at 300
+    useFleetStore.getState().updateFleet(
+      [makeTelemetry("lf-01", { battery: 299 })],
+      {},
+      60,
+    );
+    useFleetStore.getState().updateFleet(
+      [makeTelemetry("lf-01", { battery: 300 })],
+      {},
+      60,
+    );
+
+    const history = useFleetStore.getState().telemetryHistory.get("lf-01")!;
+    expect(history).toHaveLength(300);
+    // Oldest entry should have been trimmed (battery=0 gone)
+    expect(history[0]!.battery).toBe(1);
+    expect(history[history.length - 1]!.battery).toBe(300);
   });
 });

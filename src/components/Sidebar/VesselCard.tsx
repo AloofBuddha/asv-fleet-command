@@ -2,6 +2,7 @@ import * as stylex from "@stylexjs/stylex";
 import { colors, spacing, fontSizes, radii } from "../../styles/tokens.stylex";
 import type { VesselTelemetry } from "../../types/vessel";
 import type { VesselInfo } from "../../data/vesselConfigs";
+import { VesselIcon } from "../VesselIcon";
 
 const styles = stylex.create({
   card: {
@@ -155,14 +156,20 @@ export function VesselCard({
           <span {...stylex.props(styles.name)}>{info.name}</span>
           <span {...stylex.props(styles.callsign)}>{info.callsign}</span>
         </div>
-        <span
+        <div
           {...stylex.props(
             styles.typeBadge,
             info.type === "lightfish" ? styles.lightfish : styles.quickfish,
           )}
+          style={{ display: "flex", alignItems: "center", gap: "3px" }}
         >
+          <VesselIcon
+            type={info.type}
+            color={info.type === "lightfish" ? "#06b6d4" : "#f59e0b"}
+            size={14}
+          />
           {info.type === "lightfish" ? "LF" : "QF"}
-        </span>
+        </div>
       </div>
       <div {...stylex.props(styles.statsRow)}>
         <span>{speed.toFixed(1)} kn</span>

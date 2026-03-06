@@ -16,12 +16,17 @@
   "dependencies": {
     "@radix-ui/react-tabs": "^1.1.13",
     "@stylexjs/stylex": "^0.18.0",
+    "@turf/along": "^7.3.4",
+    "@turf/bearing": "^7.3.4",
+    "@turf/distance": "^7.3.4",
+    "@turf/helpers": "^7.3.4",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.576.0",
     "partykit": "^0.0.115",
     "partysocket": "^1.1.16",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-is": "^19.2.4",
     "react-leaflet": "^5.0.0",
     "recharts": "^3.7.0",
     "zustand": "^5.0.11"

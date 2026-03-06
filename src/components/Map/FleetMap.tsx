@@ -10,6 +10,8 @@ import { NauticalScale } from "./NauticalScale";
 import { RangeRings } from "./RangeRings";
 import { MapFlyTo } from "./MapFlyTo";
 import { MapInvalidateSize } from "./MapInvalidateSize";
+import { MissionRoute } from "./MissionRoute";
+import { vesselInfoMap } from "../../data/vesselConfigs";
 
 const styles = stylex.create({
   container: {
@@ -30,8 +32,23 @@ const TILE_ATTRIBUTION =
 
 function VesselLayers() {
   const vessels = useFleetStore((s) => s.vessels);
+  const selectedVesselId = useFleetStore((s) => s.selectedVesselId);
   return (
     <>
+      {/* Mission routes — dim for all, full for selected */}
+      {Array.from(vessels.values()).map((telemetry) => {
+        const info = vesselInfoMap.get(telemetry.vesselId);
+        if (!info?.route.length) return null;
+        const isSelected = telemetry.vesselId === selectedVesselId;
+        return (
+          <MissionRoute
+            key={`route-${telemetry.vesselId}`}
+            route={info.route}
+            telemetry={isSelected ? telemetry : undefined}
+            dim={!isSelected}
+          />
+        );
+      })}
       {Array.from(vessels.values()).map((telemetry) => (
         <VesselTrail key={`trail-${telemetry.vesselId}`} telemetry={telemetry} />
       ))}

@@ -60,8 +60,8 @@ const styles = stylex.create({
 });
 
 const mockInfo: VesselInfo[] = [
-  { id: "lf-01", name: "Sentinel", callsign: "LF-01", type: "lightfish" },
-  { id: "qf-01", name: "Interceptor", callsign: "QF-01", type: "quickfish" },
+  { id: "lf-01", name: "Sentinel", callsign: "LF-01", type: "lightfish", route: [] },
+  { id: "qf-01", name: "Interceptor", callsign: "QF-01", type: "quickfish", route: [] },
 ];
 
 function makeTelemetry(
