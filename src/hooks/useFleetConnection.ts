@@ -3,7 +3,10 @@ import { usePartySocket } from "partysocket/react";
 import { useFleetStore } from "../stores/fleetStore";
 import type { FleetUpdate } from "../types/vessel";
 
-const PARTYKIT_HOST = "localhost:1999";
+const PARTYKIT_HOST =
+  import.meta.env.DEV
+    ? "localhost:1999"
+    : "asv-fleet-cmd.aloofbuddha.partykit.dev";
 
 export function useFleetConnection() {
   const updateFleet = useFleetStore((s) => s.updateFleet);

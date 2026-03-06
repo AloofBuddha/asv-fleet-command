@@ -276,7 +276,7 @@ const toastStyles = stylex.create({
 
 export function AlertToast() {
   const [toastAlert, setToastAlert] = useState<Alert | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Subscribe to store changes outside render cycle
   useEffect(() => {

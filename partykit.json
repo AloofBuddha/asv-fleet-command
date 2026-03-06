@@ -1,5 +1,5 @@
 {
-  "name": "asv-fleet-command",
+  "name": "asv-fleet-cmd",
   "main": "party/vessel.ts",
   "port": 1999,
   "compatibilityDate": "2026-02-16",
